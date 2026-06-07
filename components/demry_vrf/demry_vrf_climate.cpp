@@ -9,13 +9,11 @@ namespace esphome {
 
     void DemryVrfClimate::control(const climate::ClimateCall &call) {
       if (call.get_mode().has_value()) {
-        // User requested mode change
         this->mode = *call.get_mode();
       }
       if (call.get_target_temperature().has_value()) {
         this->target_temperature = *call.get_target_temperature();
       }
-
       if (call.get_fan_mode().has_value()) {
         this->fan_mode = *call.get_fan_mode();
       }
@@ -27,13 +25,9 @@ namespace esphome {
         uint8_t offData[10] = {  0x01, this->idx_, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFA };
         offData[9] = offData[9] + 0x01 + this->idx_;
         this->uart_->write_array(offData, sizeof(offData));
-        ESP_LOGD(TAG, "receive control cmd, mode=off, send %x:%x:%x:%x:%x:%x:%x:%x:%x:%x",
-                 offData[0], offData[1], offData[2], offData[3], offData[4],
-                 offData[5], offData[6], offData[7], offData[8], offData[9]);
-
+        
         this->publish_state();
         return;
-
       } else {
         data[CMD_IDX_ON_OFF] = CMD_ON;
         if (this -> mode == climate::ClimateMode::CLIMATE_MODE_COOL) {
@@ -58,25 +52,17 @@ namespace esphome {
       }
 
       data[CMD_IDX_TARGET_TEMP] = this->target_temperature;
-
       data[9] = data[0] + data[1] + data[2] + data[3] + data[4] + data[5] - 0x03;
 
       this->uart_->write_array(data, sizeof(data));
-      ESP_LOGD(TAG, "receive control cmd, send %x:%x:%x:%x:%x:%x:%x:%x:%x:%x",
-               data[0], data[1], data[2], data[3], data[4],
-               data[5], data[6], data[7], data[8], data[9]);
-
       this->publish_state();
     }
 
     climate::ClimateTraits DemryVrfClimate::traits() {
       auto traits = climate::ClimateTraits();
       
-      // 已移除：traits.set_supports_current_temperature(true); (新版自动支持)
-      
-      // 适配新版 API：设置目标温度步长、当前温度显示步长均为 1°C
+      // 完美适配过渡期版本 ESPHome 的目标温度步长参数
       traits.set_visual_temperature_step(1);
-      traits.set_visual_current_temperature_step(1);
       
       traits.set_visual_min_temperature(16);
       traits.set_visual_max_temperature(30);
