@@ -71,9 +71,13 @@ namespace esphome {
 
     climate::ClimateTraits DemryVrfClimate::traits() {
       auto traits = climate::ClimateTraits();
-      traits.set_supports_current_temperature(true);
-      traits.set_visual_target_temperature_step(1);
-      traits.set_visual_temperature_step(1);
+      
+      // 已移除：traits.set_supports_current_temperature(true); (新版自动支持)
+      
+      // 适配新版 API：设置目标温度步长、当前温度显示步长均为 1°C
+      traits.set_target_temperature_step(1.0f);
+      traits.set_current_temperature_step(1.0f);
+      
       traits.set_visual_min_temperature(16);
       traits.set_visual_max_temperature(30);
       traits.set_supported_fan_modes({
