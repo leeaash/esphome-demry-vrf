@@ -72,7 +72,7 @@ namespace esphome {
     climate::ClimateTraits DemryVrfClimate::traits() {
       auto traits = climate::ClimateTraits();
       // 新写法（推荐）
-      //traits.add_feature_flags(climate::ClimateFeatureFlags::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
+      traits.add_feature_flags(climate::ClimateFeatureFlags::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
       // 或者用下面这行也行（等价）
       // traits.set_supports_current_temperature(true); // 旧写法，已废弃
       //traits.set_supports_current_temperature(true);
