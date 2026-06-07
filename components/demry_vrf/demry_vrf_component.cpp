@@ -96,8 +96,8 @@ namespace esphome {
           demryClimate->fan_mode = climate::CLIMATE_FAN_HIGH;
         }
 
-        demryClimate->set_target_temperature = data[CMD_IDX_TARGET_TEMP];
-        demryClimate->set_current_temperature = data[CMD_IDX_CURRENT_TEMP];
+        demryClimate->target_temperature = data[CMD_IDX_TARGET_TEMP];
+        demryClimate->current_temperature = data[CMD_IDX_CURRENT_TEMP];
 
         demryClimate->publish_state();
       }
